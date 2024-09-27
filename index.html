@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Python Runner with Brython</title>
+    <!-- Include Brython Libraries -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/brython@3.11.0/brython.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/brython@3.11.0/brython_stdlib.js"></script>
+    <style>
+        body {
+            display: flex;
+            margin: 0;
+            height: 100vh;
+            font-family: Arial, sans-serif;
+        }
+        #codeInput, #output {
+            width: 50%;
+            padding: 20px;
+            box-sizing: border-box;
+            overflow: auto;
+        }
+        #codeInput {
+            border-right: 1px solid #ccc;
+        }
+        textarea {
+            width: 100%;
+            height: calc(100% - 60px);
+            resize: none;
+            font-size: 16px;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+        button {
+            width: 100%;
+            height: 40px;
+            font-size: 16px;
+            margin-top: 10px;
+            cursor: pointer;
+        }
+        #result {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            font-size: 16px;
+            background-color: #f9f9f9;
+            padding: 10px;
+            box-sizing: border-box;
+            min-height: calc(100% - 40px);
+        }
+        h2 {
+            margin-top: 0;
+        }
+    </style>
+</head>
+<body onload="brython()">
+
+    <div id="codeInput">
+        <textarea id="pythonCode" placeholder="Type your Python code here">print("Hello, Brython!")</textarea>
+        <button id="runButton">Run Code</button>
+    </div>
+
+    <div id="output">
+        <h2>Output:</h2>
+        <div id="result"></div>
+    </div>
+
+    <!-- Brython Script to Execute Python Code -->
+    <script type="text/python">
+    from browser import document, html
+
+    def run_code(event):
+        code = document["pythonCode"].value
+        # Clear previous output
+        document["result"].clear()
+        try:
+            # Redirect print to the output div
+            import sys
+            from io import StringIO
+            sys.stdout = mystdout = StringIO()
+            exec(code)
+            # Get the output and display it
+            output = mystdout.getvalue()
+            document["result"] <= html.PRE(output)
+        except Exception as e:
+            # Display any errors
+            document["result"] <= html.PRE(str(e))
+        finally:
+            # Reset stdout
+            sys.stdout = sys.__stdout__
+
+    # Bind the click event of the button to the run_code function
+    document["runButton"].bind("click", run_code)
+    </script>
+
+</body>
+</html>
